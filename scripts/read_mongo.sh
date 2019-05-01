@@ -1,5 +1,8 @@
 #!/bin/sh
 set -ex
 echo "start reading"
-mongo mongo:27017/mydb scripts/read.js
+mongo mongo:27017/mydb <<EOF
+db.mycollection.find().count();
+db.mycollection.find({transaction_price: { \$gt: 970}}).forEach( printjson );
+EOF
 echo "done reading"
