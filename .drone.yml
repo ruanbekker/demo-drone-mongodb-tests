@@ -2,6 +2,13 @@
 kind: pipeline
 name: mongotests
 
+services:
+- name: mongo
+  image: mongo:4
+  command: [ --smallfiles ]
+  ports:
+  - 27017
+
 steps:
 - name: build-step
   image: alpine
@@ -11,27 +18,22 @@ steps:
 - name: mongodb-return-version
   image: mongo:4
   commands:
-  - sleep 5
   - date
   - mongo --host mongo --eval "db.version()"
   
 - name: mongodb-test-writes
   image: mongo:4
   commands:
-  - sleep 5
   - date
   - sh scripts/write_mongo.sh
 
 - name: mongodb-test-reads
   image: mongo:4
   commands:
-  - sleep 5
   - date
   - sh scripts/read_mongo.sh
 
-services:
-- name: mongo
-  image: mongo:4
-  command: [ --smallfiles ]
-  ports:
-  - 27017
+- name: last-step
+  image: alpine
+  commands:
+  - echo "completed at $(date)"
